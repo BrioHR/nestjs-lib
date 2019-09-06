@@ -1,0 +1,33 @@
+{
+  "name": "@briohr/nestjs-lib",
+  "version": "1.0.0",
+  "description": "Lib for BrioHR app",
+  "author": "Thibault Krebs",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --config=jest.json",
+    "test:watch": "jest --config=jest.json --watch",
+    "test:coverage": "jest --config=jest.json --coverage --coverageDirectory=coverage",
+    "start:dev": "tsc-watch -p tsconfig.json --onSuccess \"node dist/index.js\"",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "precommit": "lint-staged",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public"
+  },
+  "devDependencies": {
+    "@nestjs/swagger": "^3.1.0",
+    "@types/mongoose": "^5.5.17"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@nestjs/common": "^6.6.7",
+    "@nestjs/core": "^6.6.7",
+    "class-validator": "^0.10.0",
+    "mongoose": "^5.6.12"
+  }
+}
