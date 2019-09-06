@@ -16,7 +16,10 @@
   },
   "devDependencies": {
     "@nestjs/swagger": "^3.1.0",
-    "@types/mongoose": "^5.5.17"
+    "@types/mongoose": "^5.5.17",
+    "prettier": "^1.18.2",
+    "typescript": "^3.6.2",
+    "lint-staged": "^9.2.5"
   },
   "lint-staged": {
     "*.ts": [
