@@ -2,7 +2,6 @@ import { createParamDecorator } from "@nestjs/common";
 import { PaginatorConfig } from "./paginator.config";
 
 export const Paginator = createParamDecorator((data: any, req) => {
-
   const options = req.query;
 
   const configOptions = PaginatorConfig.available_filters;
@@ -11,7 +10,11 @@ export const Paginator = createParamDecorator((data: any, req) => {
 
   // filter all properties in option not active in the config list
   const filteredList = Object.keys(options)
-    .filter(key => configOptions.hasOwnProperty(key) && configOptions[key]["is_active"] === true)
+    .filter(
+      key =>
+        configOptions.hasOwnProperty(key) &&
+        configOptions[key]["is_active"] === true
+    )
     .reduce((obj, key) => {
       obj[key] = options[key];
 
@@ -21,7 +24,10 @@ export const Paginator = createParamDecorator((data: any, req) => {
   // Add default values for fields not set following the config
   Object.keys(configOptions).forEach(key => {
     if (configOptions[key]["is_active"] === true) {
-      if (configOptions[key]["is_default"] === true && !filteredList.hasOwnProperty(key)) {
+      if (
+        configOptions[key]["is_default"] === true &&
+        !filteredList.hasOwnProperty(key)
+      ) {
         filteredList[key] = configOptions[key]["default"];
       }
     }

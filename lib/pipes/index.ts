@@ -1,2 +1,2 @@
-export * from "./objectId.pipe"
-export * from "./stringNotEmpty.pipe"
+export * from "./objectId.pipe";
+export * from "./stringNotEmpty.pipe";

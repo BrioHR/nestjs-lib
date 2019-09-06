@@ -1,2 +1,2 @@
-export * from "./global.exception"
-export * from "./mongo.exception"
+export * from "./global.exception";
+export * from "./mongo.exception";
