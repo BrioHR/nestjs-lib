@@ -4,8 +4,6 @@ import { PaginatorConfig } from "./paginator.config";
 export const Paginator = createParamDecorator((data: any, req) => {
 
   const options = req.query;
-  console.log(options);
-  console.log('test');
 
   const configOptions = PaginatorConfig.available_filters;
 

@@ -1,197 +1,100 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Description
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
+Lib for nestJS projects, developed by the BrioHR Team.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-JWT utilities module for [Nest](https://github.com/nestjs/nest) based on the [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) package.
-
-## Installation
+# Installation
 
 ```bash
-$ npm i --save @nestjs/jwt
+$ npm install --save @briohr/nestjs-lib
 ```
 
-## Usage
+# Usage
 
-Import `JwtModule`:
 
-```typescript
-@Module({
-  imports: [JwtModule.register({ secret: 'hard!to-guess_secret' })],
-  providers: [...],
-})
-export class AuthModule {}
+##I. Paginator
+
+### Introduction:
+
+The paginator lib is providing some tools to complete the 
+[mongoose-paginate-v2 ](https://www.npmjs.com/package/mongoose-paginate-v2) plugin on nestjs. 
+
+It will provide 2 things:
+- A decorator **Paginator** for the controller to get the query params and format them to match the config. 
+- A dto type **OptionParamsDto** to create the swagger documentation
+
+### Config:
+
+The config is currently a constant array and will do the following:
+- format the name following the following convention:
 ```
+    docs: "data",
+    meta: "metadata"
+    limit: "perPage",
+    page: "currentPage",
+    nextPage: "nextPage",
+    prevPage: "prevPage",
+    totalPages: "totalPages",
+    totalDocs: "itemCount",
+    pagingCounter: "pagingCounter",
+    
+```
+> Note : data will be returned in **data** and paginator info in **metadata**
+- Activate the following options: select, collation, sort, page and limit
+- By default if no value is provided, page will be 1 and limit 100.
+- A maximum for the limit option is also configured at 1000.
 
-Inject `JwtService`:
 
-```typescript
-@Injectable()
-export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+### Example:
+
+```
+@Get()
+public async findAll(@Paginator() options: OptionParamsDto) {
+  return this.leavesService.paginateFindAll(options);
 }
 ```
 
-## Secret / Encryption Key options
+### Setup:
 
-If you want to control secret and key management dynamically you can use the `secretOrKeyProvider` function for that purpose.
+To paginate a collection, you just need to do the following: 
+1. Add the plugin mongoosePaginate in the Schema you want to paginate: 
+``LeaveSchema.plugin(mongoosePaginate);``
+2. You can now use the paginate method in your service:
+``return this.leaveModel.paginate({}, options);``
+3. You can now simply add the decorator Paginator in your controller as describe above.
 
-```typescript
-JwtModule.register({
-   /* Secret has precedance over keys */
-  secret: 'hard!to-guess_secret',
+## II. Utils
 
-  /* public key used in asymmetric algorithms (required if non other secrets present) */
-  publicKey: '...',
 
-  /* private key used in asymmetric algorithms (required if non other secrets present) */
-  privateKey: '...'
 
-  /* Dynamic key provider has precedance over static secret or pub/private keys */
-  secretOrKeyProvider: (
-    requestType: JwtSecretRequestType,
-    tokenOrPayload: string | Object | Buffer,
-    verifyOrSignOrOptions?: jwt.VerifyOptions | jwt.SignOptions
-  ) => {
-    switch (requestType) {
-      case JwtSecretRequestType.SIGN:
-        // retrieve signing key dynamically
-        return 'privateKey';
-      case JwtSecretRequestType.VERIFY:
-        // retrieve public key for verification dynamically
-        return 'publicKey';
-      default:
-        // retrieve secret dynamically
-        return 'hard!to-guess_secret';
-    }
-  },
-});
+### Exception:
+
+Two exceptions are currently available in the lib:
+
+- **GlobalException** catches every error and logs them in the std error. You can add simply add 
+in ad global exception in your main.ts file.
+```
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new GlobalException(httpAdapter));
 ```
 
-## Async options
-
-Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use `registerAsync()` method, that provides a couple of various ways to deal with async data.
-
-**1. Use factory**
-
-```typescript
-JwtModule.registerAsync({
-  useFactory: () => ({
-    secret: 'hard!to-guess_secret'
-  })
-});
+- **MongoError** catches every mongoose error and format them in a nicer output. You can add it 
+globally like the above or add it in the controller
+```
+  @UseFilters(MongoExceptionFilter)
+  export class LeaveGroupsController {
 ```
 
-Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
+### Pipes:
 
-```typescript
-JwtModule.registerAsync({
-  imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
-    secret: configService.getString('SECRET'),
-  }),
-  inject: [ConfigService],
-}),
+Some pipes are available for specific input.
+
+- **ObjectIdPipe** checks the input is a valid mongoId
+```
+  public async findOne(@Param("leaveGroupId", ObjectIdPipe) leaveGroupId: string) {
 ```
 
-**2. Use class**
 
-```typescript
-JwtModule.registerAsync({
-  useClass: JwtConfigService
-});
+- **StringNotEmptyPipe** checks the string provided is not null and not empty
 ```
-
-Above construction will instantiate `JwtConfigService` inside `JwtModule` and will leverage it to create options object.
-
-```typescript
-class JwtConfigService implements JwtOptionsFactory {
-  createJwtOptions(): JwtModuleOptions {
-    return {
-      secret: 'hard!to-guess_secret'
-    };
-  }
-}
+  @Param("leaveTypeName", StringNotEmptyPipe) leaveTypeName: string,
 ```
-
-**3. Use existing**
-
-```typescript
-JwtModule.registerAsync({
-  imports: [ConfigModule],
-  useExisting: ConfigService,
-}),
-```
-
-It works the same as `useClass` with one critical difference - `JwtModule` will lookup imported modules to reuse already created `ConfigService`, instead of instantiating it on its own.
-
-## API Spec
-
-The `JwtService` uses [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) underneath.
-
-#### jwtService.sign(payload: string | Object | Buffer, options?: SignOptions): string
-
-The sign method is an implementation of jsonwebtoken `.sign()`.
-
-#### jwtService.signAsync(payload: string | Object | Buffer, options?: SignOptions): Promise\<string\>
-
-The asynchronous `.sign()` method.
-
-#### jwtService.verify\<T extends object = any>(token: string, options?: VerifyOptions): T
-
-The verify method is an implementation of jsonwebtoken `.verify()`.
-
-#### jwtService.verifyAsync\<T extends object = any>(token: string, options?: VerifyOptions): Promise\<T\>
-
-The asynchronous `.verify()` method.
-
-#### jwtService.decode(token: string, options: DecodeOptions): object | string
-
-The decode method is an implementation of jsonwebtoken `.decode()`.
-
-The `JwtModule` takes an `options` object:
-
-- `secret` is either a string, buffer, or object containing the secret for HMAC algorithms
-- `secretOrKeyProvider` function with the following signature `(requestType, tokenOrPayload, options?) => jwt.Secret` (allows generating either secrets or keys dynamically)
-- `signOptions` [read more](https://github.com/auth0/node-jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback)
-- `privateKey` PEM encoded private key for RSA and ECDSA with passphrase an object `{ key, passphrase }` [read more](https://github.com/auth0/node-jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback)
-- `publicKey` PEM encoded public key for RSA and ECDSA
-- `verifyOptions` [read more](https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
-- `secretOrPrivateKey` (DEPRECATED!) [read more](https://github.com/auth0/node-jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback)
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
