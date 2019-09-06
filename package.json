@@ -1,6 +1,6 @@
 {
   "name": "@briohr/nestjs-lib",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Lib for BrioHR app",
   "author": "Thibault Krebs",
   "license": "MIT",
